@@ -1,28 +1,72 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import ChatMessage from './Components/ChatMessage';
+import Signup from './Components/Signup';
+import ChatApp from './Components/ChatApp';
+
+import { INSTANCE_LOCATOR, SECRET_KEY } from './config';
+
+import { default as Chatkit } from '@pusher/chatkit-server';
+
+const chatkit = new Chatkit({
+  instanceLocator: INSTANCE_LOCATOR,
+  key: SECRET_KEY
+});
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      currentUsername: '',
+      currentId: '',
+      currentView: 'signup'
+    };
+    this.changeView = this.changeView.bind(this);
+    this.createUser = this.createUser.bind(this);
+  }
+
+  createUser(username) {
+    chatkit
+      .createUser({
+        id: username,
+        name: username
+      })
+      .then(currentUser => {
+        this.setState({
+          currentUsername: username,
+          currentId: username,
+          currentView: 'chatApp'
+        });
+      })
+      .catch(err => {
+        if (err.status === 400) {
+          this.setState({
+            currentUsername: username,
+            currentId: username,
+            currentView: 'chatApp'
+          });
+        } else {
+          console.log(err.status);
+        }
+      });
+  }
+
+  changeView(view) {
+    this.setState({
+      currentView: view
+    });
+  }
+
   render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
+    let view = '';
+
+    if (this.state.currentView === 'ChatMessage') {
+      view = <ChatMessage changeView={this.changeView} />;
+    } else if (this.state.currentView === 'signup') {
+      view = <Signup onSubmit={this.createUser} />;
+    } else if (this.state.currentView === 'chatApp') {
+      view = <ChatApp currentId={this.state.currentId} />;
+    }
+    return <div className="App">{view}</div>;
   }
 }
-
 export default App;
