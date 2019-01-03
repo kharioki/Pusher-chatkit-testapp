@@ -20,11 +20,9 @@ class App extends Component {
       currentId: '',
       currentView: 'signup'
     };
-    this.changeView = this.changeView.bind(this);
-    this.createUser = this.createUser.bind(this);
   }
 
-  createUser(username) {
+  createUser = username => {
     chatkit
       .createUser({
         id: username,
@@ -48,13 +46,13 @@ class App extends Component {
           console.log(err.status);
         }
       });
-  }
+  };
 
-  changeView(view) {
+  changeView = view => {
     this.setState({
       currentView: view
     });
-  }
+  };
 
   render() {
     let view = '';
