@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 
 class ChatMessage extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   changeView = () => {
     this.props.changeView('signup');
   };
