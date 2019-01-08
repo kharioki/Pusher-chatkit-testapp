@@ -1,9 +1,29 @@
 import React, { Component } from 'react';
 import { ChatManager, TokenProvider } from '@pusher/chatkit-client';
-import { INSTANCE_LOCATOR, TOKEN_PROVIDER, ROOM_ID } from '../config';
+import {
+  INSTANCE_LOCATOR,
+  TOKEN_PROVIDER,
+  ROOM_ID,
+  SECRET_KEY,
+  KEY_SECRET
+} from '../config';
+
+import { default as Chatkit } from '@pusher/chatkit-server';
+import jwt from 'jsonwebtoken';
 
 import MessageList from './MessageList';
 import Input from './Input';
+
+var signOptions = {
+  expiresIn: '12h'
+};
+const token = jwt.sign(
+  { instance: INSTANCE_LOCATOR, iss: KEY_SECRET, sub: 'safari' },
+  'safari',
+  signOptions
+);
+const _token = jwt.decode(token);
+console.log({ _token });
 
 class ChatApp extends Component {
   constructor(props) {
@@ -17,13 +37,19 @@ class ChatApp extends Component {
   }
 
   componentDidMount() {
+    // const chatManager = new ChatManager({
+    //   instanceLocator: INSTANCE_LOCATOR,
+    //   userId: this.props.currentId,
+    //   tokenProvider: _token
+    // });
     const chatManager = new ChatManager({
       instanceLocator: INSTANCE_LOCATOR,
       userId: this.props.currentId,
       tokenProvider: new TokenProvider({
-        url: TOKEN_PROVIDER
+        url: 'http://localhost:3331/authenticate'
       })
     });
+    console.log({ chatManager });
     chatManager
       .connect()
       .then(currentUser => {

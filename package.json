@@ -5,12 +5,17 @@
   "dependencies": {
     "@pusher/chatkit-client": "^1.2.2",
     "@pusher/chatkit-server": "^1.0.4",
+    "body-parser": "^1.18.3",
+    "concurrently": "^4.1.0",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.4.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-scripts": "2.1.2"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "concurrently \"node ./server.js\" \"react-scripts start -p 3003\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
